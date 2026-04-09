@@ -1,8 +1,0 @@
-[phases.setup]
-nixPkgs = ['php82', 'php82Extensions.mongodb', 'php82Packages.composer']
-
-[phases.install]
-cmds = ['composer install --no-dev --optimize-autoloader --ignore-platform-req=ext-mongodb']
-
-[start]
-cmd = 'php -S 0.0.0.0:$PORT -t .'
