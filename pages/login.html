@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in — PayLite</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+   <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<div class="auth-page">
+  <div class="auth-box">
+
+    <div class="auth-brand">
+      <div class="logo-icon">
+        <i class="fa-solid fa-wallet"></i>
+      </div>
+      <div class="wordmark">PayLite</div>
+      <div class="tagline">Your mini digital wallet</div>
+    </div>
+
+    <div class="auth-card">
+      <h2>Welcome back</h2>
+
+      <form id="loginForm" novalidate>
+
+        <div class="field">
+          <label for="email">
+            <i class="fa-solid fa-envelope"></i> Email address
+          </label>
+          <div class="input-wrap">
+            <i class="fa-regular fa-envelope input-icon"></i>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="you@example.com"
+              autocomplete="email"
+              required
+            >
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="password">
+            <i class="fa-solid fa-lock"></i> Password
+          </label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-lock input-icon"></i>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+              required
+            >
+          </div>
+        </div>
+
+        <button class="btn" type="submit" id="loginBtn">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign in
+        </button>
+
+      </form>
+    </div>
+
+    <p class="auth-footer">
+      No account? <a href="register.html">Create one</a>
+    </p>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
+<script src="../assets/js/auth.js?v=2"></script>
+</body>
+</html>

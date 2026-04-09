@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deposit — PayLite</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-brand"><i class="fa-solid fa-wallet"></i> PayLite</span>
+  <button class="topbar-menu-btn" id="menuBtn"><i class="fa-solid fa-bars"></i></button>
+</div>
+<div class="sidebar-overlay"></div>
+
+<div class="pl-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i class="fa-solid fa-wallet"></i></div>
+      <span class="brand-name">PayLite</span>
+    </div>
+    <div class="sidebar-section">Menu</div>
+    <a href="dashboard.php"               class="sidebar-link"><i class="fa-solid fa-house"></i> Dashboard</a>
+    <a href="deposit.html"                class="sidebar-link active"><i class="fa-solid fa-arrow-down-to-line"></i> Deposit</a>
+    <a href="transfer.html"               class="sidebar-link"><i class="fa-solid fa-paper-plane"></i> Transfer</a>
+    <a href="../transactions/history.php" class="sidebar-link"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
+    <div class="sidebar-spacer"></div>
+    <a href="../auth/logout.php" class="sidebar-link danger"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+  </aside>
+
+  <main class="main">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-title"><i class="fa-solid fa-arrow-down-to-line" style="color:var(--teal)"></i> Add funds</div>
+        <div class="page-sub">Funds are credited instantly to your wallet.</div>
+      </div>
+    </div>
+
+    <div class="form-page">
+      <div class="card">
+
+        <form id="depositForm" novalidate>
+
+          <!-- Big amount input -->
+          <div class="amount-display">
+            <span class="amount-currency">XAF</span>
+            <input
+              class="amount-big"
+              type="number"
+              name="amount"
+              id="depositAmount"
+              placeholder="0"
+              min="500"
+              step="500"
+              autocomplete="off"
+            >
+            <div style="font-size:12px; color:var(--muted); margin-top:6px;" id="depositPreview"></div>
+          </div>
+
+          <!-- Quick amounts -->
+          <div class="field">
+            <label><i class="fa-solid fa-bolt"></i> Quick amounts</label>
+            <div class="quick-amounts">
+              <button type="button" class="btn btn-secondary btn-sm" data-amount="5000">5,000</button>
+              <button type="button" class="btn btn-secondary btn-sm" data-amount="10000">10,000</button>
+              <button type="button" class="btn btn-secondary btn-sm" data-amount="25000">25,000</button>
+              <button type="button" class="btn btn-secondary btn-sm" data-amount="50000">50,000</button>
+              <button type="button" class="btn btn-secondary btn-sm" data-amount="100000">100,000</button>
+            </div>
+          </div>
+
+          <div class="alert alert-info">
+            <i class="fa-solid fa-circle-info"></i>
+            Minimum deposit is XAF 500. No deposit fees apply.
+          </div>
+
+          <button class="btn" type="submit">
+            <i class="fa-solid fa-arrow-down-to-line"></i> Confirm deposit
+          </button>
+
+        </form>
+
+        <!-- Receipt area (hidden until success) -->
+        <div id="depositReceipt" style="display:none; margin-top:20px;"></div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal-overlay" id="depositConfirmModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-icon"><i class="fa-solid fa-arrow-down-to-line"></i></div>
+      <div>
+        <div class="modal-title">Confirm deposit</div>
+      </div>
+    </div>
+    <p class="modal-sub">Please review before confirming.</p>
+
+    <table class="modal-table">
+      <tr>
+        <td><i class="fa-solid fa-coins" style="color:var(--muted);margin-right:6px;"></i> Amount</td>
+        <td id="confirmDepositAmt">—</td>
+      </tr>
+      <tr>
+        <td><i class="fa-solid fa-percent" style="color:var(--muted);margin-right:6px;"></i> Fee</td>
+        <td>XAF 0</td>
+      </tr>
+      <tr>
+        <td><i class="fa-solid fa-circle-check" style="color:var(--teal);margin-right:6px;"></i> You receive</td>
+        <td id="confirmDepositAmt2" style="color:var(--teal-light);">—</td>
+      </tr>
+    </table>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" data-close-modal>
+        <i class="fa-solid fa-xmark"></i> Cancel
+      </button>
+      <button class="btn" id="confirmDepositBtn">
+        <i class="fa-solid fa-check"></i> Deposit now
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/wallet.js"></script>
+<script>
+  // Sync second amount display in modal
+  document.getElementById('depositAmount').addEventListener('input', function() {
+    const v = this.value;
+    const d2 = document.getElementById('confirmDepositAmt2');
+    if (d2) d2.textContent = v ? `XAF ${Number(v).toLocaleString()}` : '—';
+  });
+</script>
+</body>
+</html>

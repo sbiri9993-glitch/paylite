@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transfer — PayLite</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-brand"><i class="fa-solid fa-wallet"></i> PayLite</span>
+  <button class="topbar-menu-btn" id="menuBtn"><i class="fa-solid fa-bars"></i></button>
+</div>
+<div class="sidebar-overlay"></div>
+
+<div class="pl-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i class="fa-solid fa-wallet"></i></div>
+      <span class="brand-name">PayLite</span>
+    </div>
+    <div class="sidebar-section">Menu</div>
+    <a href="dashboard.php"               class="sidebar-link"><i class="fa-solid fa-house"></i> Dashboard</a>
+    <a href="deposit.html"                class="sidebar-link"><i class="fa-solid fa-arrow-down-to-line"></i> Deposit</a>
+    <a href="transfer.html"               class="sidebar-link active"><i class="fa-solid fa-paper-plane"></i> Transfer</a>
+    <a href="../transactions/history.php" class="sidebar-link"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
+    <div class="sidebar-spacer"></div>
+    <a href="../auth/logout.php" class="sidebar-link danger"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+  </aside>
+
+  <main class="main">
+
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-title"><i class="fa-solid fa-paper-plane" style="color:var(--amber)"></i> Send money</div>
+        <div class="page-sub" id="balanceSubtitle">Loading balance…</div>
+      </div>
+    </div>
+
+    <!-- Hidden balance value for JS validation -->
+    <input type="hidden" id="balanceRaw" value="0">
+
+    <div class="form-page">
+      <div class="card">
+
+        <form id="transferForm" novalidate>
+
+          <div class="field">
+            <label><i class="fa-solid fa-user"></i> Recipient email</label>
+            <div class="input-wrap">
+              <i class="fa-regular fa-envelope input-icon"></i>
+              <input
+                type="email"
+                name="recipient_email"
+                placeholder="recipient@example.com"
+                autocomplete="off"
+                required
+              >
+            </div>
+          </div>
+
+          <!-- Big amount -->
+          <div class="amount-display">
+            <span class="amount-currency">XAF</span>
+            <input
+              class="amount-big"
+              type="number"
+              name="amount"
+              placeholder="0"
+              min="1"
+              step="1"
+              autocomplete="off"
+            >
+          </div>
+
+          <!-- Fee summary -->
+          <div class="card-sm" style="margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; font-size:13px; padding:4px 0;">
+              <span style="color:var(--muted);"><i class="fa-solid fa-percent" style="margin-right:5px;"></i>Transaction fee (1%)</span>
+              <span id="feeDisplay" style="font-weight:600;">XAF 0</span>
+            </div>
+            <hr class="divider" style="margin:8px 0;">
+            <div style="display:flex; justify-content:space-between; font-size:13px; padding:4px 0;">
+              <span style="color:var(--muted);"><i class="fa-solid fa-money-bill-wave" style="margin-right:5px;"></i>Total deducted</span>
+              <span id="totalDisplay" style="font-weight:700; color:var(--danger);">XAF 0</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label><i class="fa-regular fa-message"></i> Note (optional)</label>
+            <div class="input-wrap">
+              <i class="fa-regular fa-message input-icon"></i>
+              <input type="text" name="note" placeholder="e.g. Lunch split">
+            </div>
+          </div>
+
+          <button class="btn" type="submit">
+            <i class="fa-solid fa-paper-plane"></i> Review transfer
+          </button>
+
+        </form>
+
+        <div id="transferReceipt" style="display:none; margin-top:20px;"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Confirm Modal -->
+<div class="modal-overlay" id="transferConfirmModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-icon"><i class="fa-solid fa-paper-plane"></i></div>
+      <div>
+        <div class="modal-title">Confirm transfer</div>
+      </div>
+    </div>
+    <p class="modal-sub">Please review your transfer details.</p>
+
+    <table class="modal-table">
+      <tr>
+        <td><i class="fa-regular fa-user" style="margin-right:6px;color:var(--muted)"></i> Recipient</td>
+        <td id="modalRecipient">—</td>
+      </tr>
+      <tr>
+        <td><i class="fa-solid fa-coins" style="margin-right:6px;color:var(--muted)"></i> Amount</td>
+        <td id="modalAmount">—</td>
+      </tr>
+      <tr>
+        <td><i class="fa-solid fa-percent" style="margin-right:6px;color:var(--muted)"></i> Fee (1%)</td>
+        <td id="modalFee">—</td>
+      </tr>
+      <tr>
+        <td><i class="fa-solid fa-money-bill-wave" style="margin-right:6px;color:var(--danger)"></i> Total deducted</td>
+        <td id="modalTotal" style="color:var(--danger);">—</td>
+      </tr>
+    </table>
+
+    <div class="alert alert-warning" style="margin-bottom:16px;">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      This action cannot be undone once confirmed.
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" data-close-modal>
+        <i class="fa-solid fa-xmark"></i> Cancel
+      </button>
+      <button class="btn" id="confirmTransferBtn">
+        <i class="fa-solid fa-check"></i> Send now
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/wallet.js"></script>
+<script>
+  // Fetch balance on load and update subtitle
+  fetch('../wallet/get_balance.php')
+    .then(r => r.json())
+    .then(d => {
+      if (d.balance !== undefined) {
+        document.getElementById('balanceRaw').value = d.balance;
+        document.getElementById('balanceSubtitle').textContent =
+          `Available balance: XAF ${Number(d.balance).toLocaleString()}`;
+      }
+    })
+    .catch(() => {
+      document.getElementById('balanceSubtitle').textContent = 'Could not load balance.';
+    });
+</script>
+</body>
+</html>
