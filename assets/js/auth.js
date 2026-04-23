@@ -219,7 +219,7 @@ function initRegister() {
     setLoading(submitBtn, 'Creating account…');
 
     try {
-      const res = await fetch('http://localhost/paylite/auth/register.php', {
+      const res = await fetch('../auth/register.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
@@ -289,7 +289,7 @@ function initLogin() {
     setLoading(submitBtn, 'Signing in…');
 
     try {
-      const res = await fetch('http://localhost/paylite/auth/login.php', {
+      const res = await fetch('../auth/login.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
