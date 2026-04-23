@@ -3,8 +3,8 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-define('MONGO_URI', 'mongodb+srv://sbiri9993_db_user:H7Zd7Xq6G46yxcTu@cluster0.qdne7qv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
-define('MONGO_DB',  'paylite');
+define('MONGO_URI');
+define('MONGO_DB');
 
 
 try {
