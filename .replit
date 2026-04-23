@@ -22,19 +22,18 @@ args = "Start application"
 name = "Start application"
 author = "agent"
 
-[workflows.workflow.metadata]
-outputType = "webview"
-
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "bash start.sh"
 waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
 
 [[ports]]
 localPort = 5000
 externalPort = 80
 
 [deployment]
-run = ["bash", "start.sh"]
-deploymentTarget = "autoscale"
-build = ["composer", "install", "--no-dev", "--optimize-autoloader", "--ignore-platform-req=ext-mongodb"]
+run = ["sh", "-c", "php -S 0.0.0.0:5000 index.html"]
+deploymentTarget = "cloudrun"

@@ -37,7 +37,10 @@ function showAlert(container, msg, type = 'danger') {
   const icons = { success: 'fa-circle-check', danger: 'fa-circle-xmark', info: 'fa-circle-info', warning: 'fa-triangle-exclamation' };
   const d = document.createElement('div');
   d.className = `alert alert-${type} wallet-alert`;
-  d.innerHTML = `<i class="fa-solid ${icons[type] || icons.danger}"></i> ${msg}`;
+  const i = document.createElement('i');
+  i.className = `fa-solid ${icons[type] || icons.danger}`;
+  d.appendChild(i);
+  d.appendChild(document.createTextNode(' ' + msg));
   container.prepend(d);
   if (type === 'success') setTimeout(() => d.remove(), 6000);
 }
@@ -46,15 +49,24 @@ function removeAlert(container) {
   container.querySelector('.wallet-alert')?.remove();
 }
 
+const _origChildren = new WeakMap();
+
 function setLoading(btn, text = 'Processing…') {
   btn.disabled = true;
-  btn.dataset.orig = btn.innerHTML;
-  btn.innerHTML = `<span class="spinner"></span> ${text}`;
+  const frag = document.createDocumentFragment();
+  while (btn.firstChild) frag.appendChild(btn.firstChild);
+  _origChildren.set(btn, frag);
+  const s = document.createElement('span');
+  s.className = 'spinner';
+  btn.appendChild(s);
+  btn.appendChild(document.createTextNode(' ' + text));
 }
 
 function clearLoading(btn) {
   btn.disabled = false;
-  btn.innerHTML = btn.dataset.orig;
+  const frag = _origChildren.get(btn);
+  while (btn.firstChild) btn.removeChild(btn.firstChild);
+  if (frag) btn.appendChild(frag);
 }
 
 /* ============================================================
@@ -305,26 +317,42 @@ function buildReceipt(containerId, data) {
   const el = document.getElementById(containerId);
   if (!el) return;
 
-  const rows = Object.entries(data)
+  while (el.firstChild) el.removeChild(el.firstChild);
+
+  const wrap = document.createElement('div');
+  wrap.className = 'receipt';
+
+  const header = document.createElement('div');
+  header.className = 'receipt-header';
+  const hi = document.createElement('i');
+  hi.className = 'fa-solid fa-receipt';
+  header.appendChild(hi);
+  header.appendChild(document.createTextNode(' \u00a0' + data.type + ' Receipt'));
+  wrap.appendChild(header);
+
+  Object.entries(data)
     .filter(([k]) => k !== 'type' && k !== 'status')
-    .map(([k, v]) => `
-      <div class="receipt-row">
-        <span>${k.charAt(0).toUpperCase() + k.slice(1)}</span>
-        <strong>${v}</strong>
-      </div>`)
-    .join('');
+    .forEach(([k, v]) => {
+      const row = document.createElement('div');
+      row.className = 'receipt-row';
+      const span = document.createElement('span');
+      span.textContent = k.charAt(0).toUpperCase() + k.slice(1);
+      const strong = document.createElement('strong');
+      strong.textContent = v;
+      row.appendChild(span);
+      row.appendChild(strong);
+      wrap.appendChild(row);
+    });
 
-  el.innerHTML = `
-    <div class="receipt">
-      <div class="receipt-header">
-        <i class="fa-solid fa-receipt"></i> &nbsp;${data.type} Receipt
-      </div>
-      ${rows}
-      <div class="receipt-footer">
-        <i class="fa-solid fa-shield-halved"></i> &nbsp;Transaction secured by PayLite
-      </div>
-    </div>`;
+  const footer = document.createElement('div');
+  footer.className = 'receipt-footer';
+  const fi = document.createElement('i');
+  fi.className = 'fa-solid fa-shield-halved';
+  footer.appendChild(fi);
+  footer.appendChild(document.createTextNode(' \u00a0Transaction secured by PayLite'));
+  wrap.appendChild(footer);
 
+  el.appendChild(wrap);
   el.style.display = 'block';
   el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }

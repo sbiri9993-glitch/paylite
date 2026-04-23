@@ -9,12 +9,21 @@
    ============================================================ */
    console.log('auth.js loaded');
 
+function makeIconText(iconClass, text) {
+  const frag = document.createDocumentFragment();
+  const i = document.createElement('i');
+  i.className = iconClass;
+  frag.appendChild(i);
+  frag.appendChild(document.createTextNode(' ' + text));
+  return frag;
+}
+
 function showFieldError(input, msg) {
   clearFieldError(input);
   input.classList.add('is-error');
   const p = document.createElement('p');
   p.className = 'field-error';
-  p.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> ${msg}`;
+  p.appendChild(makeIconText('fa-solid fa-circle-exclamation', msg));
   input.closest('.field').appendChild(p);
 }
 
@@ -33,7 +42,7 @@ function showBanner(container, msg, type = 'danger') {
     : type === 'warning'
     ? 'fa-triangle-exclamation'
     : 'fa-circle-xmark';
-  d.innerHTML = `<i class="fa-solid ${icon}"></i> ${msg}`;
+  d.appendChild(makeIconText(`fa-solid ${icon}`, msg));
   container.prepend(d);
   if (type === 'success') setTimeout(() => d.remove(), 5000);
 }
@@ -42,15 +51,24 @@ function removeBanner(container) {
   container.querySelector('.auth-banner')?.remove();
 }
 
+const _origChildren = new WeakMap();
+
 function setLoading(btn, text = 'Please wait…') {
   btn.disabled = true;
-  btn.dataset.orig = btn.innerHTML;
-  btn.innerHTML = `<span class="spinner"></span> ${text}`;
+  const frag = document.createDocumentFragment();
+  while (btn.firstChild) frag.appendChild(btn.firstChild);
+  _origChildren.set(btn, frag);
+  const s = document.createElement('span');
+  s.className = 'spinner';
+  btn.appendChild(s);
+  btn.appendChild(document.createTextNode(' ' + text));
 }
 
 function clearLoading(btn) {
   btn.disabled = false;
-  btn.innerHTML = btn.dataset.orig;
+  const frag = _origChildren.get(btn);
+  while (btn.firstChild) btn.removeChild(btn.firstChild);
+  if (frag) btn.appendChild(frag);
 }
 
 function shakeCard(card) {
