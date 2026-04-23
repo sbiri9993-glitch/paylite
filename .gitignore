@@ -2,4 +2,4 @@ vendor/
 *.phar
 *.bat
 composer-setup.php
-config/database.php
+*.env
