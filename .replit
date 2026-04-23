@@ -35,5 +35,5 @@ localPort = 5000
 externalPort = 80
 
 [deployment]
-run = ["sh", "-c", "php -S 0.0.0.0:5000 index.html"]
+run = ["sh", "-c", "php -S 0.0.0.0:5000 index.php"]
 deploymentTarget = "cloudrun"
