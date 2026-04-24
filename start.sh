@@ -19,6 +19,7 @@ error_reporting = E_ALL
 EOF
 
 composer install --no-dev --optimize-autoloader --ignore-platform-req=ext-mongodb
+echo "Starting on port: $PORT"
 
 exec php -c /tmp/paylite-php.ini -S 0.0.0.0:`$PORT -t . router.php
 "
